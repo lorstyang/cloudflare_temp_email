@@ -172,4 +172,7 @@ export type LocaleMessages = {
     TgNoPermissionViewMailMsg: string
     TgBotTokenRequiredMsg: string
     TgLangFeatureDisabledMsg: string
+    TgAiVerificationCode: string
+    TgAiAuthLink: string
+    TgAiExtractedInfo: string
 }

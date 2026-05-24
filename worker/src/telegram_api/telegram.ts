@@ -312,7 +312,7 @@ export function newTelegramBot(c: Context<HonoCustomType>, token: string): Teleg
         const raw = mailRow ? await resolveRawEmail(mailRow) : undefined;
         const mailId = mailRow?.id;
         const created_at = mailRow?.created_at;
-        const { mail } = raw ? await parseMail(msgs, { rawEmail: raw }, queryAddress, created_at) : { mail: msgs.TgNoMoreMailsMsg };
+        const { mail } = raw ? await parseMail(msgs, { rawEmail: raw }, queryAddress, created_at, mailRow?.metadata) : { mail: msgs.TgNoMoreMailsMsg };
         const settings = await c.env.KV.get<TelegramSettings>(CONSTANTS.TG_KV_SETTINGS_KEY, "json");
         const miniAppButtons = []
         if (settings?.miniAppUrl && settings?.miniAppUrl?.length > 0 && mailId) {
@@ -381,7 +381,8 @@ export async function initTelegramBotCommands(c: Context<HonoCustomType>, bot: T
 const parseMail = async (
     msgs: LocaleMessages,
     parsedEmailContext: ParsedEmailContext,
-    address: string, created_at: string | undefined | null
+    address: string, created_at: string | undefined | null,
+    metadata?: string | null
 ) => {
     if (!parsedEmailContext.rawEmail) {
         return {};
@@ -389,8 +390,26 @@ const parseMail = async (
     try {
         const parsedEmail = await commonParseMail(parsedEmailContext);
         let parsedText = parsedEmail?.text || "";
-        if (parsedText.length && parsedText.length > 1000) {
-            parsedText = parsedEmail?.text.substring(0, 1000) + `\n\n...\n${msgs.TgMsgTooLongMsg}`;
+        if (parsedText.length && parsedText.length > 3000) {
+            parsedText = parsedEmail?.text.substring(0, 3000) + `\n\n...\n${msgs.TgMsgTooLongMsg}`;
+        }
+        let aiHeader = "";
+        if (metadata) {
+            try {
+                const metaObj = JSON.parse(metadata);
+                const aiExtract = metaObj?.ai_extract;
+                if (aiExtract && aiExtract.type !== "none" && aiExtract.result) {
+                    if (aiExtract.type === "auth_code") {
+                        aiHeader = `${msgs.TgAiVerificationCode}: ${aiExtract.result}\n\n`;
+                    } else if (aiExtract.type === "auth_link") {
+                        aiHeader = `${msgs.TgAiAuthLink}: ${aiExtract.result_text || 'Link'} - ${aiExtract.result}\n\n`;
+                    } else {
+                        aiHeader = `${msgs.TgAiExtractedInfo} (${aiExtract.type}): ${aiExtract.result_text ? aiExtract.result_text + ' - ' : ''}${aiExtract.result}\n\n`;
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to parse metadata in parseMail", e);
+            }
         }
         return {
             isHtml: false,
@@ -398,6 +417,7 @@ const parseMail = async (
                 + `To: ${address}\n`
                 + (created_at ? `Date: ${created_at}\n` : "")
                 + `Subject: ${parsedEmail?.subject}\n`
+                + aiHeader
                 + `Content:\n${parsedText || msgs.TgParseFailedViewInAppMsg}`
         };
     } catch (e) {
@@ -423,13 +443,15 @@ export async function sendMailToTelegram(
     if (!userId && !globalPush) {
         return;
     }
-    const mailId = await c.env.DB.prepare(
-        `SELECT id FROM raw_mails where address = ? and message_id = ?`
-    ).bind(address, message_id).first<string>("id");
+    const mailRow = await c.env.DB.prepare(
+        `SELECT id, metadata FROM raw_mails where address = ? and message_id = ?`
+    ).bind(address, message_id).first<{ id: string, metadata: string | null }>();
+    const mailId = mailRow?.id;
+    const metadata = mailRow?.metadata;
     const bot = newTelegramBot(c, c.env.TELEGRAM_BOT_TOKEN);
 
     const buildAndSend = async (targetUserId: string, msgs: LocaleMessages) => {
-        const { mail } = await parseMail(msgs, parsedEmailContext, address, new Date().toUTCString());
+        const { mail } = await parseMail(msgs, parsedEmailContext, address, new Date().toUTCString(), metadata);
         if (!mail) return;
         const attachments = parsedEmailContext.parsedEmail?.attachments || [];
         const buttons = [];
