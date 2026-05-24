@@ -465,6 +465,26 @@ export async function sendMailToTelegram(
             console.error("Failed to fallback query mailId", err);
         }
     }
+
+    // If AI extraction is enabled, only push to Telegram if it is a verification code email
+    if (getBooleanValue(c.env.ENABLE_AI_EMAIL_EXTRACT)) {
+        let isAuthCode = false;
+        if (metadata) {
+            try {
+                const metaObj = JSON.parse(metadata);
+                if (metaObj?.ai_extract?.type === "auth_code") {
+                    isAuthCode = true;
+                }
+            } catch (e) {
+                console.error("Failed to parse metadata in sendMailToTelegram", e);
+            }
+        }
+        if (!isAuthCode) {
+            console.log(`Skip Telegram push for ${address} as it is not a verification code (auth_code) email`);
+            return;
+        }
+    }
+
     const bot = newTelegramBot(c, c.env.TELEGRAM_BOT_TOKEN);
 
     const buildAndSend = async (targetUserId: string, msgs: LocaleMessages) => {
