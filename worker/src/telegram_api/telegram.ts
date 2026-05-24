@@ -394,6 +394,7 @@ const parseMail = async (
             parsedText = parsedEmail?.text.substring(0, 3000) + `\n\n...\n${msgs.TgMsgTooLongMsg}`;
         }
         let aiHeader = "";
+        let isAuthCode = false;
         if (metadata) {
             try {
                 const metaObj = JSON.parse(metadata);
@@ -401,6 +402,7 @@ const parseMail = async (
                 if (aiExtract && aiExtract.type !== "none" && aiExtract.result) {
                     if (aiExtract.type === "auth_code") {
                         aiHeader = `${msgs.TgAiVerificationCode}: ${aiExtract.result}\n\n`;
+                        isAuthCode = true;
                     } else if (aiExtract.type === "auth_link") {
                         aiHeader = `${msgs.TgAiAuthLink}: ${aiExtract.result_text || 'Link'} - ${aiExtract.result}\n\n`;
                     } else {
@@ -418,7 +420,7 @@ const parseMail = async (
                 + (created_at ? `Date: ${created_at}\n` : "")
                 + `Subject: ${parsedEmail?.subject}\n`
                 + aiHeader
-                + `Content:\n${parsedText || msgs.TgParseFailedViewInAppMsg}`
+                + (isAuthCode ? "" : `Content:\n${parsedText || msgs.TgParseFailedViewInAppMsg}`)
         };
     } catch (e) {
         return {
