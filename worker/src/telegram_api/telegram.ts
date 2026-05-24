@@ -443,11 +443,26 @@ export async function sendMailToTelegram(
     if (!userId && !globalPush) {
         return;
     }
-    const mailRow = await c.env.DB.prepare(
-        `SELECT id, metadata FROM raw_mails where address = ? and message_id = ?`
-    ).bind(address, message_id).first<{ id: string, metadata: string | null }>();
-    const mailId = mailRow?.id;
-    const metadata = mailRow?.metadata;
+    let mailId: string | undefined;
+    let metadata: string | null = null;
+    try {
+        const mailRow = await c.env.DB.prepare(
+            `SELECT id, metadata FROM raw_mails where address = ? and message_id = ?`
+        ).bind(address, message_id).first<{ id: string, metadata: string | null }>();
+        mailId = mailRow?.id;
+        metadata = mailRow?.metadata;
+    } catch (e) {
+        // Fallback in case metadata column does not exist yet (db migration not run)
+        console.warn("Failed to select metadata (db migration may be missing), falling back to id", e);
+        try {
+            const mailRow = await c.env.DB.prepare(
+                `SELECT id FROM raw_mails where address = ? and message_id = ?`
+            ).bind(address, message_id).first<{ id: string }>();
+            mailId = mailRow?.id;
+        } catch (err) {
+            console.error("Failed to fallback query mailId", err);
+        }
+    }
     const bot = newTelegramBot(c, c.env.TELEGRAM_BOT_TOKEN);
 
     const buildAndSend = async (targetUserId: string, msgs: LocaleMessages) => {
