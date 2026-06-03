@@ -175,4 +175,10 @@ export type LocaleMessages = {
     TgAiVerificationCode: string
     TgAiAuthLink: string
     TgAiExtractedInfo: string
+    TgAiExtractResultMsg: string
+    TgAiExtractAuthCodeMsg: string
+    TgAiExtractAuthLinkMsg: string
+    TgAiExtractServiceLinkMsg: string
+    TgAiExtractSubscriptionLinkMsg: string
+    TgAiExtractOtherLinkMsg: string
 }

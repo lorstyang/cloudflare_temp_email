@@ -177,6 +177,12 @@ const messages: LocaleMessages = {
     TgAiVerificationCode: "🔑 【AI 提取验证码】",
     TgAiAuthLink: "🔗 【AI 提取认证链接】",
     TgAiExtractedInfo: "📌 【AI 提取信息】",
+    TgAiExtractResultMsg: "AI 提取",
+    TgAiExtractAuthCodeMsg: "验证码",
+    TgAiExtractAuthLinkMsg: "验证链接",
+    TgAiExtractServiceLinkMsg: "服务链接",
+    TgAiExtractSubscriptionLinkMsg: "订阅链接",
+    TgAiExtractOtherLinkMsg: "其他链接",
 }
 
 export default messages;

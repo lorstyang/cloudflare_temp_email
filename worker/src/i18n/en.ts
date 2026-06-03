@@ -177,6 +177,12 @@ const messages: LocaleMessages = {
     TgAiVerificationCode: "🔑 [AI Verification Code]",
     TgAiAuthLink: "🔗 [AI Verification Link]",
     TgAiExtractedInfo: "📌 [AI Extracted Info]",
+    TgAiExtractResultMsg: "AI extracted",
+    TgAiExtractAuthCodeMsg: "Verification code",
+    TgAiExtractAuthLinkMsg: "Verification link",
+    TgAiExtractServiceLinkMsg: "Service link",
+    TgAiExtractSubscriptionLinkMsg: "Subscription link",
+    TgAiExtractOtherLinkMsg: "Other link",
 }
 
 export default messages;

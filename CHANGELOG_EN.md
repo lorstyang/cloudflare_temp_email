@@ -10,7 +10,9 @@
 
 ### Features
 
-- feat: |Telegram| Direct push of AI-extracted verification codes and links to the top of Telegram notification messages, and increase the TG mail push body truncation limit from 1000 to 3000 characters
+- feat: |AI Extract| Fall back to a built-in regex verification-code extractor (English / Chinese / Japanese / Korean, with year and `YYYYMMDD` date rejection) when no Workers AI binding is configured, so self-hosted deployments without Workers AI still surface codes in Telegram pushes and webhooks
+- feat: |Telegram| Show AI extraction results in Telegram new-mail notifications and `/mails` history views, including verification codes, auth links, service links, and subscription links; support direct push of AI-extracted verification codes and links to the top of Telegram notification messages, and increase the TG mail push body truncation limit from 1000 to 3000 characters
+- feat: |Webhook| Support AI extraction placeholders in mail webhook templates, including `aiExtractType`, `aiExtractResult`, and `aiExtractResultText`
 - feat: |Frontend| Add `DISABLE_SHOW_GITHUB_FOR_USER` to hide the Header GitHub/version entry from normal users while keeping it visible to admin users (issue #1041)
 - feat: |Frontend| Upgrade the address credential dialog to "Address Credentials & Connection Methods" and reuse it for both normal users and admin-created addresses; support showing AI Agent access via `ENABLE_AGENT_EMAIL_INFO` and SMTP/IMAP client settings via `SMTP_IMAP_PROXY_CONFIG`
 - docs: |Random Subdomain| Clarify in the "Use Random Subdomain" frontend tip and the `subdomain` / `worker-vars` docs (zh & en) that receiving mail on `name@<random>.abc.com` requires a wildcard `*` MX record under the base domain in DNS, because Cloudflare Email Routing does not inherit the apex configuration onto subdomains (issue #1035)
