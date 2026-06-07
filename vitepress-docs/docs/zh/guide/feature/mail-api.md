@@ -32,7 +32,9 @@ querystring = {
     "limit":"20",
     "offset":"0",
     # address 为可选参数
-    "address":"xxxx@awsl.uk"
+    "address":"xxxx@awsl.uk",
+    # sender 为可选参数，按发件人（信封发件人）过滤，模糊匹配
+    "sender":"forwarder@example.com"
 }
 
 headers = {

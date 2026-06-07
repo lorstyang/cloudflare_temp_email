@@ -32,7 +32,9 @@ querystring = {
     "limit":"20",
     "offset":"0",
     # address is optional parameter
-    "address":"xxxx@awsl.uk"
+    "address":"xxxx@awsl.uk",
+    # sender is optional parameter, filters by envelope sender, supports fuzzy match
+    "sender":"forwarder@example.com"
 }
 
 headers = {
