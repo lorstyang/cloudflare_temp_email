@@ -8,7 +8,7 @@ export default {
         const addressParams = address ? [address] : [];
         const senderQuery = sender ? `source LIKE ?` : "";
         const senderParams = sender ? [`%${sender}%`] : [];
-        const authCodeQuery = `metadata IS NOT NULL AND json_extract(metadata, '$.type') = 'auth_code'`;
+        const authCodeQuery = `metadata IS NOT NULL AND json_extract(metadata, '$.ai_extract.type') = 'auth_code'`;
         const filterQuerys = [addressQuery, senderQuery, authCodeQuery].filter((item) => item).join(" and ");
         const finalQuery = filterQuerys.length > 0 ? `where ${filterQuerys}` : "";
         const filterParams = [...addressParams, ...senderParams];
