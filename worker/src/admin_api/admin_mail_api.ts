@@ -8,13 +8,15 @@ export default {
         const addressParams = address ? [address] : [];
         const senderQuery = sender ? `source LIKE ?` : "";
         const senderParams = sender ? [`%${sender}%`] : [];
-        const filterQuerys = [addressQuery, senderQuery].filter((item) => item).join(" and ");
+        const authCodeQuery = `metadata IS NOT NULL AND json_extract(metadata, '$.type') = 'auth_code'`;
+        const filterQuerys = [addressQuery, senderQuery, authCodeQuery].filter((item) => item).join(" and ");
         const finalQuery = filterQuerys.length > 0 ? `where ${filterQuerys}` : "";
         const filterParams = [...addressParams, ...senderParams];
+        const finalLimit = limit ? parseInt(limit) : 10;
         return await handleMailListQuery(c,
             `SELECT * FROM raw_mails ${finalQuery}`,
             `SELECT count(*) as count FROM raw_mails ${finalQuery}`,
-            filterParams, limit, offset
+            filterParams, finalLimit, offset
         );
     },
     getUnknowMails: async (c: Context<HonoCustomType>) => {
