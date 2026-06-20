@@ -11,6 +11,7 @@
 ### Features
 
 - feat: |API| 管理员邮件查询 API (`/admin/mails`) 支持使用 `sender` 参数过滤发件人（信封发件人）
+- feat: |API| 管理员邮件查询 API (`/admin/mails`) 新增 `only_auth_code` 查询参数，默认强制过滤非验证码邮件（保持旧外部接口兼容），传入 `"false"` 则关闭过滤以保证管理端网页邮件列表与总数显示一致
 - feat: |AI 识别| 未配置 Workers AI 绑定时，自动回退到内置正则提取验证码（支持中英日韩，并排除年份与 `YYYYMMDD` 日期误判），让无 Workers AI 的自部署用户也能在 Telegram 推送与 Webhook 中拿到验证码
 - feat: |Telegram| Telegram 新邮件推送与 `/mails` 历史邮件查看支持展示 AI 提取结果，包含验证码、验证链接、服务链接、订阅链接等关键信息；支持将 AI 提取的邮件验证码和链接直接推送到 Telegram 通知消息的顶部，并将 TG 邮件推送正文截断上限从 1000 字符提升至 3000 字符
 - feat: |Webhook| 邮件 Webhook 模板支持填充 AI 提取结果占位符，包括 `aiExtractType`、`aiExtractResult`、`aiExtractResultText`

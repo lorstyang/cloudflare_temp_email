@@ -11,6 +11,7 @@
 ### Features
 
 - feat: |API| Support filtering emails by envelope sender using the `sender` query parameter in `/admin/mails`
+- feat: |API| Add `only_auth_code` query parameter to `/admin/mails`, defaulting to `"true"` to filter verification code emails (preserving compatibility with external clients), or passing `"false"` to disable filtering so all emails display correctly in the admin web UI
 - feat: |AI Extract| Fall back to a built-in regex verification-code extractor (English / Chinese / Japanese / Korean, with year and `YYYYMMDD` date rejection) when no Workers AI binding is configured, so self-hosted deployments without Workers AI still surface codes in Telegram pushes and webhooks
 - feat: |Telegram| Show AI extraction results in Telegram new-mail notifications and `/mails` history views, including verification codes, auth links, service links, and subscription links; support direct push of AI-extracted verification codes and links to the top of Telegram notification messages, and increase the TG mail push body truncation limit from 1000 to 3000 characters
 - feat: |Webhook| Support AI extraction placeholders in mail webhook templates, including `aiExtractType`, `aiExtractResult`, and `aiExtractResultText`

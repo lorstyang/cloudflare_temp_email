@@ -34,7 +34,9 @@ querystring = {
     # address is optional parameter
     "address":"xxxx@awsl.uk",
     # sender is optional parameter, filters by envelope sender, supports fuzzy match
-    "sender":"forwarder@example.com"
+    "sender":"forwarder@example.com",
+    # only_auth_code is optional parameter, defaults to "true" (returns verification code emails only), set to "false" to return all emails
+    "only_auth_code":"false"
 }
 
 headers = {

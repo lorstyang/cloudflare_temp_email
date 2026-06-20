@@ -3,12 +3,14 @@ import { handleMailListQuery } from "../common";
 
 export default {
     getMails: async (c: Context<HonoCustomType>) => {
-        const { address, limit, offset, sender } = c.req.query();
+        const { address, limit, offset, sender, only_auth_code } = c.req.query();
         const addressQuery = address ? `address = ?` : "";
         const addressParams = address ? [address] : [];
         const senderQuery = sender ? `source LIKE ?` : "";
         const senderParams = sender ? [`%${sender}%`] : [];
-        const authCodeQuery = `metadata IS NOT NULL AND json_extract(metadata, '$.ai_extract.type') = 'auth_code'`;
+        const authCodeQuery = only_auth_code === "false"
+            ? ""
+            : `metadata IS NOT NULL AND json_extract(metadata, '$.ai_extract.type') = 'auth_code'`;
         const filterQuerys = [addressQuery, senderQuery, authCodeQuery].filter((item) => item).join(" and ");
         const finalQuery = filterQuerys.length > 0 ? `where ${filterQuerys}` : "";
         const filterParams = [...addressParams, ...senderParams];

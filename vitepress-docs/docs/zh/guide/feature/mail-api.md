@@ -34,7 +34,9 @@ querystring = {
     # address 为可选参数
     "address":"xxxx@awsl.uk",
     # sender 为可选参数，按发件人（信封发件人）过滤，模糊匹配
-    "sender":"forwarder@example.com"
+    "sender":"forwarder@example.com",
+    # only_auth_code 为可选参数，默认为 "true"（只返回验证码类邮件），设置为 "false" 时返回所有邮件
+    "only_auth_code":"false"
 }
 
 headers = {

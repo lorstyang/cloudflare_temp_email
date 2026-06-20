@@ -22,6 +22,7 @@ const fetchMailData = async (limit, offset) => {
         `/admin/mails`
         + `?limit=${limit}`
         + `&offset=${offset}`
+        + `&only_auth_code=false`
         + (adminMailTabAddress.value ? `&address=${adminMailTabAddress.value}` : '')
     );
 }
